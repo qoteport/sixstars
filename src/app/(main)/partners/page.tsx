@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useCollection, useFirebase, useMemoFirebase, useUser } from "@/firebase";
-import { addDoc, collection, query, where, doc, setDoc } from 'firebase/firestore';
+import { collection, query, where, doc, setDoc, writeBatch } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Separator } from "@/components/ui/separator";
 import type { Partner, SoftwareProduct, SoftwareCategory } from "@/lib/types";
@@ -35,6 +35,7 @@ const formSchema = z.object({
   productName: z.string().min(2, { message: "Product name is required."}),
   productDescription: z.string().min(20, { message: "Description must be at least 20 characters."}),
   productCategory: z.string({ required_error: "Please select a category." }),
+  productUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   pricingModel: z.string().min(2, { message: "Pricing model is required."}),
 });
 
@@ -67,6 +68,7 @@ export default function PartnerRegisterPage() {
       productName: "",
       productDescription: "",
       productCategory: "",
+      productUrl: "",
       pricingModel: "",
     },
   });
@@ -106,20 +108,48 @@ export default function PartnerRegisterPage() {
       return;
     }
     
-    const partnersCol = collection(firestore, 'partners');
+    const batch = writeBatch(firestore);
     
     try {
-      const partnerDocRef = doc(partnersCol);
-      await setDoc(partnerDocRef, {
+      // 1. Create Partner Document
+      const partnerDocRef = doc(collection(firestore, 'partners'));
+      batch.set(partnerDocRef, {
         id: partnerDocRef.id,
         companyName: values.companyName,
         contactEmail: values.contactEmail,
         websiteUrl: values.websiteUrl,
         logoUrl: finalLogoUrl,
         companyDescription: values.companyDescription,
-        status: 'Draft',
+        status: 'Draft', // Applications start as drafts
         createdAt: new Date().toISOString(),
       });
+      
+      // 2. Create Software Product Document
+      const softwareProductDocRef = doc(collection(firestore, 'softwareProducts'));
+      batch.set(softwareProductDocRef, {
+        id: softwareProductDocRef.id,
+        partnerId: partnerDocRef.id, // Link to the new partner
+        name: values.productName,
+        description: values.productDescription,
+        details: values.productDescription, // Use short description as details for now
+        category: values.productCategory,
+        model: values.pricingModel,
+        productUrl: values.productUrl || '',
+        status: 'Draft',
+        // Default values for a new product
+        imageUrl: 'https://picsum.photos/seed/new-software/600/400',
+        imageHint: 'software product',
+        rating: 0,
+        reviewCount: 0,
+        clicks: 0,
+        features: [],
+        isFeatured: false,
+        createdAt: new Date().toISOString(),
+      });
+
+      // 3. Commit the batch
+      await batch.commit();
+      
       setIsSubmitSuccessful(true);
     } catch(error) {
        console.error("Error submitting partner application:", error);
@@ -373,6 +403,19 @@ export default function PartnerRegisterPage() {
                           </FormItem>
                         )}
                       />
+                     <FormField
+                      control={form.control}
+                      name="productUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Software Website URL <span className="text-xs text-muted-foreground">(Optional)</span></FormLabel>
+                          <FormControl>
+                            <Input type="url" placeholder="https://yourcompany.com/product" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                        <FormField
                         control={form.control}
                         name="pricingModel"

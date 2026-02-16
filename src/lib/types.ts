@@ -28,7 +28,7 @@ export const softwareProductSchema = z.object({
   category: z.string(),
   model: z.string(),
   rating: z.number(),
-  features: z.array(z.string()),
+  features: z.array(z.string()).optional(),
   details: z.string(),
   productUrl: z.string().url().optional(),
   createdAt: z.string().optional(),
