@@ -60,6 +60,7 @@ export default function PartnerRegisterPage() {
       companyDescription: "",
       productName: "",
       productDescription: "",
+      productCategory: "",
       pricingModel: "",
     },
   });
