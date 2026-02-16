@@ -55,8 +55,10 @@ service cloud.firestore {
     // Partners list is public to read.
     match /partners/{partnerId} {
       allow read: if true;
-      // Only admins can create, update, or delete partners.
-      allow write: if isAdmin();
+      // Authenticated users can create partner applications
+      allow create: if request.auth != null;
+      // Only admins can update or delete partners.
+      allow update, delete: if isAdmin();
     }
 
     // Approved testimonials are public to read.

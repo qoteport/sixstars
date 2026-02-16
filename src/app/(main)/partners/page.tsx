@@ -5,15 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Handshake, Building, Zap, Users, Loader2, CheckCircle, ArrowRight } from "lucide-react";
+import { Handshake, Building, Zap, Users, Loader2, CheckCircle, ArrowRight, X, UserCircle2 } from "lucide-react";
 import Image from 'next/image';
 import Link from 'next/link';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useFirebase, useCollection, useMemoFirebase } from "@/firebase";
-import { addDoc, collection, query, where } from 'firebase/firestore';
+import { useCollection, useFirebase, useMemoFirebase, useUser } from "@/firebase";
+import { addDoc, collection, query, where, doc, setDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Separator } from "@/components/ui/separator";
 import type { Partner, SoftwareProduct, SoftwareCategory } from "@/lib/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
@@ -21,13 +22,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { paths } from "@/lib/paths";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
 
 
 const formSchema = z.object({
   companyName: z.string().min(2, { message: "Company name must be at least 2 characters." }),
   contactEmail: z.string().email({ message: "Please enter a valid email address." }),
   websiteUrl: z.string().url({ message: "Please enter a valid URL." }),
-  logoUrl: z.string().url({ message: "Please enter a valid URL for your logo." }),
+  logoUrl: z.string().url({ message: "Please enter a valid URL for your logo." }).optional().or(z.literal('')),
   companyDescription: z.string().min(20, { message: "Description must be at least 20 characters."}),
   productName: z.string().min(2, { message: "Product name is required."}),
   productDescription: z.string().min(20, { message: "Description must be at least 20 characters."}),
@@ -36,10 +39,13 @@ const formSchema = z.object({
 });
 
 export default function PartnerRegisterPage() {
+  const { user, isUserLoading } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
-  const { firestore } = useFirebase();
+  const { firestore, storage } = useFirebase();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const partnersQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'partners'), where('status', '==', 'Published')) : null, [firestore]);
   const { data: partners, isLoading: partnersLoading } = useCollection<Partner>(partnersQuery);
@@ -54,7 +60,7 @@ export default function PartnerRegisterPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       companyName: "",
-      contactEmail: "",
+      contactEmail: user?.email || "",
       websiteUrl: "",
       logoUrl: "",
       companyDescription: "",
@@ -66,17 +72,50 @@ export default function PartnerRegisterPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!firestore) return;
+    if (!firestore || !storage) return;
 
     setIsSubmitting(true);
+    setUploadProgress(null);
+    
+    let finalLogoUrl = values.logoUrl;
+
+    if (imageFile) {
+        const storageRef = ref(storage, `partner-logos/${Date.now()}_${imageFile.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, imageFile);
+        try {
+            finalLogoUrl = await new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    (snapshot) => setUploadProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
+                    (error) => reject(error),
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        resolve(downloadURL);
+                    }
+                );
+            });
+        } catch (error) {
+            console.error("Upload failed:", error);
+            setIsSubmitting(false);
+            return;
+        }
+    }
+
+    if (!finalLogoUrl) {
+      console.error("A logo URL or uploaded image is required.");
+      setIsSubmitting(false);
+      return;
+    }
+    
     const partnersCol = collection(firestore, 'partners');
     
     try {
-      await addDoc(partnersCol, {
+      const partnerDocRef = doc(partnersCol);
+      await setDoc(partnerDocRef, {
+        id: partnerDocRef.id,
         companyName: values.companyName,
         contactEmail: values.contactEmail,
         websiteUrl: values.websiteUrl,
-        logoUrl: values.logoUrl,
+        logoUrl: finalLogoUrl,
         companyDescription: values.companyDescription,
         status: 'Draft',
         createdAt: new Date().toISOString(),
@@ -87,6 +126,8 @@ export default function PartnerRegisterPage() {
        // Here you would show an error toast to the user
     } finally {
        setIsSubmitting(false);
+       setUploadProgress(null);
+       setImageFile(null);
     }
   }
 
@@ -179,13 +220,25 @@ export default function PartnerRegisterPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-             {isSubmitSuccessful ? (
+              {isUserLoading && <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto"/></div>}
+              {!isUserLoading && !user && (
+                <div className="text-center py-10">
+                    <UserCircle2 className="h-16 w-16 text-muted-foreground mx-auto mb-4"/>
+                    <h3 className="text-xl font-semibold">Please Sign In</h3>
+                    <p className="text-muted-foreground mt-2 mb-6">You need an account to apply as a partner.</p>
+                    <Button asChild>
+                        <Link href={paths.login}>Sign In or Create Account</Link>
+                    </Button>
+                </div>
+              )}
+             {!isUserLoading && user && isSubmitSuccessful ? (
                 <div className="text-center py-10">
                   <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold">Application Submitted!</h3>
                   <p className="text-muted-foreground mt-2">Thank you. Our team will review your submission and get back to you soon.</p>
                 </div>
               ) : (
+                !isUserLoading && user && (
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -229,19 +282,35 @@ export default function PartnerRegisterPage() {
                         </FormItem>
                       )}
                     />
-                     <FormField
-                      control={form.control}
-                      name="logoUrl"
-                      render={({ field }) => (
-                        <FormItem>
+
+                    <FormField control={form.control} name="logoUrl" render={({ field }) => (
+                      <FormItem>
                           <FormLabel>Company Logo URL</FormLabel>
-                          <FormControl>
-                            <Input type="url" placeholder="https://yourcompany.com/logo.png" {...field} />
-                          </FormControl>
+                          <FormControl><Input {...field} placeholder="https://... Paste a URL" disabled={!!imageFile} /></FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      </FormItem>
+                    )} />
+
+                    <div className="relative my-2"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Or</span></div></div>
+
+                    <div>
+                      <Label htmlFor="logo-upload-public">Upload a Logo</Label>
+                      <div className="mt-2 flex items-center gap-4">
+                        <FormControl>
+                          <Input id="logo-upload-public" type="file" accept="image/*" className="flex-1" onChange={(e) => {
+                            const file = e.target.files?.[0] || null;
+                            setImageFile(file);
+                            if (file) form.setValue('logoUrl', '');
+                          }} />
+                        </FormControl>
+                        {imageFile && <Button variant="ghost" size="icon" onClick={() => {
+                          setImageFile(null);
+                          const fileInput = document.getElementById('logo-upload-public') as HTMLInputElement;
+                          if (fileInput) fileInput.value = '';
+                        }}><X className="h-4 w-4" /></Button>}
+                      </div>
+                      {uploadProgress !== null && <Progress value={uploadProgress} className="w-full mt-2" />}
+                    </div>
                      <FormField
                       control={form.control}
                       name="companyDescription"
@@ -323,7 +392,7 @@ export default function PartnerRegisterPage() {
                     </Button>
                   </form>
                 </Form>
-              )}
+              ))}
             </CardContent>
           </Card>
         </div>
