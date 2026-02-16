@@ -25,7 +25,8 @@ import {
   DatabaseZap,
   Handshake,
   Quote,
-  DollarSign
+  DollarSign,
+  FolderKanban
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -67,6 +68,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link href={paths.admin.software}>
                   <LayoutGrid />
                   <span>Software</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname.startsWith(paths.admin.categories)}
+                tooltip="Categories"
+              >
+                <Link href={paths.admin.categories}>
+                  <FolderKanban />
+                  <span>Categories</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

@@ -6,6 +6,7 @@
       "description": "A unified communication platform for modern teams, enabling seamless collaboration across departments and locations.",
       "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx0ZWNobm9sb2d5JTIwYWJzdHJhY3R8ZW58MHx8fHwxNzYxODU1OTgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "technology abstract",
+      "productUrl": "https://example.com/connectsphere",
       "category": "Collaboration",
       "pricingTiers": [
         {
@@ -69,6 +70,7 @@
       "description": "Big data analytics and visualization powerhouse that transforms raw data into actionable business intelligence.",
       "imageUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkYXRhJTIwdmlzdWFsaXphdGlvbnxlbnwwfHx8fDE3NjE3NzEyOTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "data visualization",
+      "productUrl": "https://example.com/datavortex",
       "category": "Data Analytics",
       "pricingTiers": [
         {
@@ -120,6 +122,7 @@
       "description": "Collaborative design tool for UI/UX designers, featuring real-time co-editing and a vast component library.",
       "imageUrl": "https://images.unsplash.com/photo-1545401791-ab4c6050dd4f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkZXNpZ24lMjBpbnRlcmZhY2V8ZW58MHx8fHwxNzYxODYzNDQwfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "design interface",
+      "productUrl": "https://example.com/pixelperfect",
       "category": "Design",
       "pricingTiers": [
         {
@@ -166,6 +169,7 @@
       "description": "AI-powered code assistant and development environment that accelerates the entire software development lifecycle.",
       "imageUrl": "https://images.unsplash.com/photo-1566915896913-549d796d2166?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb2RlJTIwZWRpdG9yfGVufDB8fHx8MTc2MTc3Nzc5OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "code editor",
+      "productUrl": "https://example.com/codegenius",
       "category": "Development",
       "pricingTiers": [
         {
@@ -205,6 +209,7 @@
       "description": "End-to-end encrypted workflow management system designed for industries with high-security requirements.",
       "imageUrl": "https://images.unsplash.com/photo-1618767451283-c9705dff0874?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c2VjdXJpdHklMjBuZXR3b3JrfGVufDB8fHx8MTc2MTg2MzQ0MHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "security network",
+      "productUrl": "https://example.com/secureflow",
       "category": "Security",
       "pricingTiers": [
         {
@@ -245,6 +250,7 @@
       "description": "Automated marketing platform that helps businesses grow their audience and convert leads effectively.",
       "imageUrl": "https://images.unsplash.com/photo-1542744173-05336fcc7ad4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYXJrZXRpbmclMjBjaGFydHxlbnwwfHx8fDE3NjE4Mzk5Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "marketing chart",
+      "productUrl": "https://example.com/marketreach",
       "category": "Marketing",
       "pricingTiers": [
         {

@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, Bot, CheckCircle, ArrowLeft, Sparkles, LifeBuoy, Users, Check, MessageSquare } from 'lucide-react';
+import { Star, Bot, CheckCircle, ArrowLeft, Sparkles, LifeBuoy, Users, Check, MessageSquare, ExternalLink } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 import { useState, use, useEffect } from 'react';
@@ -386,9 +386,11 @@ export default function SoftwareDetailPage({ params }: { params: Promise<{ id: s
                 </ul>
                 <Separator className="my-6" />
                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button asChild size="lg" className="flex-1">
-                        <Link href={paths.support}><LifeBuoy/>Get Purchase Help</Link>
-                    </Button>
+                    {product.productUrl && (
+                        <Button asChild size="lg" className="flex-1">
+                            <a href={product.productUrl} target="_blank" rel="noopener noreferrer"><ExternalLink/>Visit Website</a>
+                        </Button>
+                    )}
                     <Button asChild variant="outline" size="lg" className="flex-1">
                        <Link href={paths.support}><Users/>Speak to an Expert</Link>
                     </Button>

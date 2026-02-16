@@ -14,6 +14,7 @@ export const paths = {
     dashboard: '/admin',
     users: '/admin/users',
     software: '/admin/software',
+    categories: '/admin/categories',
     partners: '/admin/partners',
     inquiries: '/admin/inquiries',
     salesInquiries: '/admin/sales-inquiries',

@@ -30,6 +30,7 @@ export const softwareProductSchema = z.object({
   rating: z.number(),
   features: z.array(z.string()),
   details: z.string(),
+  productUrl: z.string().url().optional(),
   createdAt: z.string().optional(),
   reviewCount: z.number().optional(),
   partnerId: z.string().optional(),
@@ -125,3 +126,10 @@ export const userProfileSchema = z.object({
   partnerId: z.string().optional(),
 });
 export type UserProfile = z.infer<typeof userProfileSchema>;
+
+export const softwareCategorySchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string().optional(),
+});
+export type SoftwareCategory = z.infer<typeof softwareCategorySchema>;

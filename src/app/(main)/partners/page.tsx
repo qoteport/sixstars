@@ -15,11 +15,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useFirebase, useCollection, useMemoFirebase } from "@/firebase";
 import { addDoc, collection, query, where } from 'firebase/firestore';
 import { Separator } from "@/components/ui/separator";
-import type { Partner, SoftwareProduct } from "@/lib/types";
+import type { Partner, SoftwareProduct, SoftwareCategory } from "@/lib/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { paths } from "@/lib/paths";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 const formSchema = z.object({
@@ -30,7 +31,7 @@ const formSchema = z.object({
   companyDescription: z.string().min(20, { message: "Description must be at least 20 characters."}),
   productName: z.string().min(2, { message: "Product name is required."}),
   productDescription: z.string().min(20, { message: "Description must be at least 20 characters."}),
-  productCategory: z.string().min(2, { message: "Category is required."}),
+  productCategory: z.string({ required_error: "Please select a category." }),
   pricingModel: z.string().min(2, { message: "Pricing model is required."}),
 });
 
@@ -46,6 +47,9 @@ export default function PartnerRegisterPage() {
   const softwareProductsQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'softwareProducts'), where('status', '==', 'Published')) : null, [firestore]);
   const { data: softwareProducts } = useCollection<SoftwareProduct>(softwareProductsQuery);
 
+  const categoriesQuery = useMemoFirebase(() => firestore ? collection(firestore, 'softwareCategories') : null, [firestore]);
+  const { data: categories } = useCollection<SoftwareCategory>(categoriesQuery);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,7 +60,6 @@ export default function PartnerRegisterPage() {
       companyDescription: "",
       productName: "",
       productDescription: "",
-      productCategory: "",
       pricingModel: "",
     },
   });
@@ -284,9 +287,18 @@ export default function PartnerRegisterPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Product Category</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., CRM, Project Management" {...field} />
-                            </FormControl>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a category" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {categories?.map(cat => (
+                                        <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}

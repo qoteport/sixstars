@@ -37,6 +37,22 @@ export async function migrateSoftwareToFirestore() {
 
   const batch = writeBatch(firestore);
   const productsCollectionRef = collection(firestore, 'softwareProducts');
+  const categoriesCollectionRef = collection(firestore, 'softwareCategories');
+
+  // Create category documents from the placeholder data
+  const uniqueCategories = [...new Set(SoftwareProducts.map(p => p.category))];
+  
+  for (const categoryName of uniqueCategories) {
+      const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
+      const categoryDocRef = doc(categoriesCollectionRef, categoryId);
+      batch.set(categoryDocRef, {
+          id: categoryId,
+          name: categoryName,
+          description: `Software related to ${categoryName}.`
+      });
+      console.log(`Prepared category: ${categoryName}`);
+  }
+
 
   for (const [index, product] of SoftwareProducts.entries()) {
     // 1. Create a reference for the new product document using its original ID
@@ -53,6 +69,8 @@ export async function migrateSoftwareToFirestore() {
       partnerId, // Add the link to the partner
       reviewCount: reviews.length,
       createdAt: new Date().toISOString(),
+      category: product.category,
+      productUrl: product.productUrl,
     };
     
     batch.set(productDocRef, productDataForFirestore);
@@ -87,8 +105,8 @@ export async function migrateSoftwareToFirestore() {
 
   try {
     await batch.commit();
-    console.log(`Successfully migrated ${SoftwareProducts.length} software products.`);
-    return { success: true, message: `Successfully migrated ${SoftwareProducts.length} software products.` };
+    console.log(`Successfully migrated ${SoftwareProducts.length} software products and ${uniqueCategories.length} categories.`);
+    return { success: true, message: `Successfully migrated ${SoftwareProducts.length} software products and ${uniqueCategories.length} categories.` };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('Error committing batch:', errorMessage);

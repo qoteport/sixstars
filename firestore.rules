@@ -45,6 +45,13 @@ service cloud.firestore {
       }
     }
 
+    // Software categories are public to read
+    match /softwareCategories/{categoryId} {
+        allow read: if true;
+        // Only Admins can manage categories
+        allow write: if isAdmin();
+    }
+
     // Partners list is public to read.
     match /partners/{partnerId} {
       allow read: if true;

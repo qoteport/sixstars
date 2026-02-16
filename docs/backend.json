@@ -46,6 +46,11 @@
           "format": "uri",
           "description": "URL for the product's primary image."
         },
+        "productUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL for the product's own website."
+        },
         "imageHint": {
           "type": "string",
           "description": "AI hint for the product image."
@@ -93,6 +98,18 @@
         "model",
         "status"
       ]
+    },
+    "SoftwareCategory": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "SoftwareCategory",
+        "type": "object",
+        "description": "Defines a category for software products.",
+        "properties": {
+            "id": { "type": "string", "description": "Unique identifier for the category." },
+            "name": { "type": "string", "description": "Name of the category (e.g., CRM, Finance)." },
+            "description": { "type": "string", "description": "A short description of the category." }
+        },
+        "required": ["id", "name"]
     },
     "PricingTier": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -420,6 +437,22 @@
             {
               "name": "softwareProductId",
               "description": "Unique identifier for the software product."
+            }
+          ]
+        }
+      },
+       {
+        "path": "/softwareCategories/{categoryId}",
+        "definition": {
+          "entityName": "SoftwareCategory",
+          "schema": {
+            "$ref": "#/backend/entities/SoftwareCategory"
+          },
+          "description": "Stores all software categories.",
+          "params": [
+            {
+              "name": "categoryId",
+              "description": "Unique identifier for the category."
             }
           ]
         }

@@ -30,7 +30,7 @@ import {
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetClose } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
-import type { SoftwareProduct, Partner, PricingTier } from '@/lib/types';
+import type { SoftwareProduct, Partner, PricingTier, SoftwareCategory } from '@/lib/types';
 import { collection, deleteDoc, doc, updateDoc, setDoc, writeBatch, addDoc, getDocs } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +49,7 @@ const softwareFormSchema = z.object({
   description: z.string().min(10, 'Description is required'),
   details: z.string().min(20, 'Details are required'),
   imageUrl: z.string().url('A valid image URL is required'),
+  productUrl: z.string().url('A valid product URL is required').optional().or(z.literal('')),
   imageHint: z.string().optional(),
   category: z.string().min(2, 'Category is required'),
   model: z.string().min(2, 'Sales model is required'),
@@ -58,7 +59,7 @@ const softwareFormSchema = z.object({
 });
 
 
-function SoftwareForm({ product, onComplete }: { product?: SoftwareProduct, onComplete: () => void }) {
+function SoftwareForm({ product, categories, onComplete }: { product?: SoftwareProduct, categories: SoftwareCategory[], onComplete: () => void }) {
   const { firestore } = useFirebase();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,6 +71,7 @@ function SoftwareForm({ product, onComplete }: { product?: SoftwareProduct, onCo
         description: '',
         details: '',
         imageUrl: '',
+        productUrl: '',
         imageHint: '',
         category: '',
         model: 'Subscription',
@@ -92,6 +94,7 @@ function SoftwareForm({ product, onComplete }: { product?: SoftwareProduct, onCo
         description: '',
         details: '',
         imageUrl: '',
+        productUrl: '',
         imageHint: '',
         category: '',
         model: 'Subscription',
@@ -148,7 +151,16 @@ function SoftwareForm({ product, onComplete }: { product?: SoftwareProduct, onCo
                 <FormItem><FormLabel>Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
             )} />
             <FormField control={form.control} name="category" render={({ field }) => (
-                <FormItem><FormLabel>Category</FormLabel><FormControl><Input placeholder="e.g. CRM" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Category</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                        {categories.map(cat => (
+                            <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <FormMessage /></FormItem>
             )} />
             <FormField control={form.control} name="description" render={({ field }) => (
                 <FormItem><FormLabel>Short Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
@@ -158,6 +170,9 @@ function SoftwareForm({ product, onComplete }: { product?: SoftwareProduct, onCo
             )} />
             <FormField control={form.control} name="imageUrl" render={({ field }) => (
                 <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+            )} />
+            <FormField control={form.control} name="productUrl" render={({ field }) => (
+                <FormItem><FormLabel>Product Website URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
             )} />
              <FormField control={form.control} name="imageHint" render={({ field }) => (
                 <FormItem><FormLabel>Image Hint</FormLabel><FormControl><Input {...field} placeholder="e.g. technology abstract" /></FormControl><FormMessage /></FormItem>
@@ -427,6 +442,12 @@ export default function SoftwareAdminPage() {
     [firestore]
   );
   const { data: partners, isLoading: partnersLoading } = useCollection<Partner>(partnersQuery);
+  
+  const categoriesQuery = useMemoFirebase(
+    () => (firestore ? collection(firestore, 'softwareCategories') : null),
+    [firestore]
+  );
+  const { data: categories, isLoading: categoriesLoading } = useCollection<SoftwareCategory>(categoriesQuery);
 
   const partnersMap = useMemo(() => {
     if (!partners) return new Map();
@@ -468,7 +489,7 @@ export default function SoftwareAdminPage() {
     setSheetState({ open: false, product: undefined, view: 'edit' });
   }
 
-  const isLoading = productsLoading || partnersLoading;
+  const isLoading = productsLoading || partnersLoading || categoriesLoading;
 
   return (
     <Fragment>
@@ -619,7 +640,7 @@ export default function SoftwareAdminPage() {
     </div>
      <Sheet open={sheetState.open} onOpenChange={(open) => !open && handleCloseSheet()}>
         <SheetContent className="sm:max-w-2xl w-full">
-            {sheetState.view === 'edit' && <SoftwareForm product={sheetState.product} onComplete={handleCloseSheet} />}
+            {sheetState.view === 'edit' && categories && <SoftwareForm product={sheetState.product} categories={categories} onComplete={handleCloseSheet} />}
             {sheetState.view === 'pricing' && sheetState.product && <PricingForm product={sheetState.product} onComplete={handleCloseSheet} />}
         </SheetContent>
     </Sheet>
