@@ -1,0 +1,283 @@
+{
+  "placeholderImages": [
+    {
+      "id": "prod_001",
+      "name": "ConnectSphere",
+      "description": "A unified communication platform for modern teams, enabling seamless collaboration across departments and locations.",
+      "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx0ZWNobm9sb2d5JTIwYWJzdHJhY3R8ZW58MHx8fHwxNzYxODU1OTgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "technology abstract",
+      "category": "Collaboration",
+      "pricingTiers": [
+        {
+          "name": "Basic",
+          "price": 29,
+          "frequency": "/month",
+          "features": [
+            "Up to 10 users",
+            "Core chat features",
+            "5GB storage"
+          ]
+        },
+        {
+          "name": "Pro",
+          "price": 49,
+          "frequency": "/month",
+          "features": [
+            "Up to 50 users",
+            "Video conferencing",
+            "20GB storage",
+            "Priority support"
+          ]
+        },
+        {
+          "name": "Enterprise",
+          "price": 99,
+          "frequency": "/month",
+          "features": [
+            "Unlimited users",
+            "Advanced security",
+            "Unlimited storage",
+            "Dedicated account manager"
+          ]
+        }
+      ],
+      "model": "Subscription",
+      "rating": 4.5,
+      "reviews": [
+        {
+          "author": "Alice",
+          "rating": 5,
+          "comment": "Transformed our team communication!"
+        },
+        {
+          "author": "Bob",
+          "rating": 4,
+          "comment": "Good, but needs more integrations."
+        }
+      ],
+      "features": [
+        "Real-time Chat",
+        "Video Conferencing",
+        "File Sharing",
+        "Task Management"
+      ],
+      "details": "### Unleash Team Synergy\n\nConnectSphere is more than just a messaging app; it's a complete digital workspace. It integrates with your existing tools to bring all your team's communication into one place, reducing context switching and boosting productivity. \n\n*   **Centralized Hub:** Keep all your conversations, files, and tools in one organized space.\n*   **Scalable:** From small teams to large enterprises, ConnectSphere grows with you.\n*   **Secure:** Enterprise-grade security to protect your sensitive data."
+    },
+    {
+      "id": "prod_002",
+      "name": "DataVortex",
+      "description": "Big data analytics and visualization powerhouse that transforms raw data into actionable business intelligence.",
+      "imageUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkYXRhJTIwdmlzdWFsaXphdGlvbnxlbnwwfHx8fDE3NjE3NzEyOTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data visualization",
+      "category": "Data Analytics",
+      "pricingTiers": [
+        {
+          "name": "Starter",
+          "price": 99,
+          "frequency": "/month",
+          "features": [
+            "5 dashboards",
+            "10 data sources",
+            "Email support"
+          ]
+        },
+        {
+          "name": "Growth",
+          "price": 199,
+          "frequency": "/month",
+          "features": [
+            "Unlimited dashboards",
+            "Unlimited data sources",
+            "Predictive analytics"
+          ]
+        }
+      ],
+      "model": "Subscription",
+      "rating": 4.8,
+      "reviews": [
+        {
+          "author": "Charlie",
+          "rating": 5,
+          "comment": "Incredible insights from our data."
+        },
+        {
+          "author": "Diana",
+          "rating": 4,
+          "comment": "Steep learning curve, but powerful."
+        }
+      ],
+      "features": [
+        "Interactive Dashboards",
+        "Predictive Analytics",
+        "SQL Editor",
+        "Automated Reporting"
+      ],
+      "details": "### See the Story in Your Data\n\nDataVortex empowers your entire organization to make data-driven decisions. Connect to any data source, create stunning visualizations, and share insights in minutes.\n\n*   **Real-time Dashboards:** Monitor your business with up-to-the-second data.\n*   **AI-Powered Insights:** Automatically discover trends and anomalies in your data.\n*   **Collaboration:** Share and discuss dashboards with your team."
+    },
+    {
+      "id": "prod_003",
+      "name": "PixelPerfect",
+      "description": "Collaborative design tool for UI/UX designers, featuring real-time co-editing and a vast component library.",
+      "imageUrl": "https://images.unsplash.com/photo-1545401791-ab4c6050dd4f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkZXNpZ24lMjBpbnRlcmZhY2V8ZW58MHx8fHwxNzYxODYzNDQwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "design interface",
+      "category": "Design",
+      "pricingTiers": [
+        {
+          "name": "Individual",
+          "price": 25,
+          "frequency": "/month",
+          "features": [
+            "Unlimited files",
+            "3 projects",
+            "Basic prototyping"
+          ]
+        },
+        {
+          "name": "Team",
+          "price": 60,
+          "frequency": "/month",
+          "features": [
+            "Unlimited projects",
+            "Shared libraries",
+            "Advanced prototyping"
+          ]
+        }
+      ],
+      "model": "Subscription",
+      "rating": 4.7,
+      "reviews": [
+        {
+          "author": "Eve",
+          "rating": 5,
+          "comment": "A must-have for any design team."
+        }
+      ],
+      "features": [
+        "Vector Editing",
+        "Prototyping",
+        "Design Systems",
+        "Developer Handoff"
+      ],
+      "details": "### Design, Prototype, and Collaborate\n\nPixelPerfect is the all-in-one design platform that takes you from initial idea to final handoff. Create beautiful interfaces, build interactive prototypes, and maintain a consistent design system with ease.\n\n*   **Real-time Collaboration:** Design together with your team, no matter where they are.\n*   **Powerful Prototyping:** Create realistic, interactive prototypes without writing any code.\n*   **Component Libraries:** Build and share a library of reusable design components."
+    },
+    {
+      "id": "prod_004",
+      "name": "CodeGenius",
+      "description": "AI-powered code assistant and development environment that accelerates the entire software development lifecycle.",
+      "imageUrl": "https://images.unsplash.com/photo-1566915896913-549d796d2166?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb2RlJTIwZWRpdG9yfGVufDB8fHx8MTc2MTc3Nzc5OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "code editor",
+      "category": "Development",
+      "pricingTiers": [
+        {
+          "name": "Free",
+          "price": 0,
+          "frequency": "/month",
+          "features": [
+            "Basic code completion",
+            "Community support"
+          ]
+        },
+        {
+          "name": "Pro",
+          "price": 10,
+          "frequency": "/month",
+          "features": [
+            "Advanced AI completion",
+            "Automated debugging",
+            "Refactoring tools"
+          ]
+        }
+      ],
+      "model": "Freemium",
+      "rating": 4.6,
+      "reviews": [],
+      "features": [
+        "AI Code Completion",
+        "Automated Debugging",
+        "Refactoring Tools",
+        "Integrated Terminal"
+      ],
+      "details": "### Write Better Code, Faster\n\nCodeGenius is your pair-programmer. It understands your code and provides intelligent suggestions to help you write, debug, and refactor code more efficiently.\n\n*   **Context-Aware Suggestions:** Get code completions that fit the context of your project.\n*   **Error Detection:** Find and fix bugs before they make it to production.\n*   **Language Support:** Works with dozens of popular programming languages."
+    },
+    {
+      "id": "prod_005",
+      "name": "SecureFlow",
+      "description": "End-to-end encrypted workflow management system designed for industries with high-security requirements.",
+      "imageUrl": "https://images.unsplash.com/photo-1618767451283-c9705dff0874?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c2VjdXJpdHklMjBuZXR3b3JrfGVufDB8fHx8MTc2MTg2MzQ0MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "security network",
+      "category": "Security",
+      "pricingTiers": [
+        {
+          "name": "Business",
+          "price": 79,
+          "frequency": "/month",
+          "features": [
+            "E2E Encryption",
+            "Access Control",
+            "Audit Logs"
+          ]
+        },
+        {
+          "name": "Enterprise",
+          "price": 0,
+          "frequency": "Contact us",
+          "features": [
+            "Compliance Automation",
+            "Custom integrations",
+            "Dedicated support"
+          ]
+        }
+      ],
+      "model": "Enterprise",
+      "rating": 4.9,
+      "reviews": [],
+      "features": [
+        "End-to-End Encryption",
+        "Access Control",
+        "Audit Logs",
+        "Compliance Automation"
+      ],
+      "details": "### Security Without Compromise\n\nSecureFlow provides a robust platform for managing sensitive workflows and data. With end-to-end encryption and granular access controls, you can be sure your data is always protected.\n\n*   **Zero-Knowledge Architecture:** We can't access your data, and neither can anyone else.\n*   **Compliance Ready:** Meets the requirements of HIPAA, GDPR, and other regulations.\n*   **Customizable Workflows:** Adapt the platform to fit your unique business processes."
+    },
+    {
+      "id": "prod_006",
+      "name": "MarketReach",
+      "description": "Automated marketing platform that helps businesses grow their audience and convert leads effectively.",
+      "imageUrl": "https://images.unsplash.com/photo-1542744173-05336fcc7ad4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYXJrZXRpbmclMjBjaGFydHxlbnwwfHx8fDE3NjE4Mzk5Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "marketing chart",
+      "category": "Marketing",
+      "pricingTiers": [
+        {
+          "name": "Growth",
+          "price": 65,
+          "frequency": "/month",
+          "features": [
+            "10,000 contacts",
+            "Email marketing",
+            "Social media automation"
+          ]
+        },
+        {
+          "name": "Scale",
+          "price": 125,
+          "frequency": "/month",
+          "features": [
+            "50,000 contacts",
+            "Lead nurturing",
+            "Advanced analytics"
+          ]
+        }
+      ],
+      "model": "Subscription",
+      "rating": 4.4,
+      "reviews": [],
+      "features": [
+        "Email Marketing",
+        "Social Media Automation",
+        "Lead Nurturing",
+        "Analytics"
+      ],
+      "details": "### Automate Your Growth Engine\n\nMarketReach is the marketing automation platform that works for you. Build campaigns, nurture leads, and measure your ROI with a powerful and easy-to-use toolset.\n\n*   **Drag-and-Drop Builder:** Create beautiful emails and landing pages without any code.\n*   **Smart Segmentation:** Send the right message to the right person at the right time.\n*   **Powerful Analytics:** Understand what's working and what's not."
+    }
+  ]
+}

@@ -1,0 +1,568 @@
+
+{
+  "entities": {
+    "UserProfile": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "UserProfile",
+        "type": "object",
+        "description": "Stores user profile information.",
+        "properties": {
+          "uid": { "type": "string", "description": "The user's unique ID from Firebase Auth." },
+          "email": { "type": "string", "format": "email" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "companyName": { "type": "string" },
+          "role": { "type": "string", "enum": ["buyer", "seller"] },
+          "isAdmin": { "type": "boolean", "description": "Whether the user has admin privileges." },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "partnerId": { "type": "string", "description": "If the user is a seller, this links to their Partner ID." }
+        },
+        "required": ["uid", "email", "firstName", "lastName", "role", "createdAt"]
+    },
+    "SoftwareProduct": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SoftwareProduct",
+      "type": "object",
+      "description": "Represents a software product listed on the platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the software product."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the software product."
+        },
+        "description": {
+          "type": "string",
+          "description": "Short description of the product."
+        },
+        "details": {
+          "type": "string",
+          "description": "Detailed markdown description of the software product's features and benefits."
+        },
+        "imageUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL for the product's primary image."
+        },
+        "imageHint": {
+          "type": "string",
+          "description": "AI hint for the product image."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the software (e.g., CRM, Finance)."
+        },
+        "model": {
+          "type": "string",
+          "description": "Sales model (e.g., Subscription, Freemium, Enterprise)."
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of key features."
+        },
+        "rating": {
+          "type": "number",
+          "description": "Average user rating from 0 to 5."
+        },
+        "reviewCount": {
+          "type": "number",
+          "description": "Total number of reviews."
+        },
+        "partnerId": {
+          "type": "string",
+          "description": "The ID of the partner that owns this software."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Published", "Draft"],
+          "description": "Visibility status of the product."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "details",
+        "imageUrl",
+        "category",
+        "model",
+        "status"
+      ]
+    },
+    "PricingTier": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PricingTier",
+      "type": "object",
+      "description": "Defines a pricing tier for a software product.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the tier (e.g., Basic, Pro)."
+        },
+        "price": {
+          "type": "number",
+          "description": "Price of the tier."
+        },
+        "frequency": {
+          "type": "string",
+          "description": "Billing frequency (e.g., /month, /year)."
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of features included in this tier."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "price",
+        "frequency",
+        "features"
+      ]
+    },
+    "Review": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Review",
+      "type": "object",
+      "description": "A user review for a software product.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string",
+          "description": "Name of the reviewer."
+        },
+        "rating": {
+          "type": "number",
+          "description": "Rating from 1 to 5."
+        },
+        "comment": {
+          "type": "string",
+          "description": "The text content of the review."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of when the review was submitted."
+        }
+      },
+      "required": [
+        "id",
+        "author",
+        "rating",
+        "comment"
+      ]
+    },
+    "Partner": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Partner",
+      "type": "object",
+      "description": "Represents a software business partner listing their products.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the partner."
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Name of the partner company."
+        },
+        "contactEmail": {
+          "type": "string",
+          "description": "Contact email address for the partner.",
+          "format": "email"
+        },
+        "websiteUrl": {
+          "type": "string",
+          "description": "URL of the partner's website.",
+          "format": "uri"
+        },
+        "logoUrl": {
+          "type": "string",
+          "description": "URL for the company's logo.",
+          "format": "uri"
+        },
+        "companyDescription": {
+            "type": "string",
+            "description": "A short description of the partner company."
+        },
+        "status": {
+            "type": "string",
+            "enum": ["Published", "Draft"],
+            "description": "The visibility status of the partner."
+        }
+      },
+      "required": [
+        "id",
+        "companyName",
+        "contactEmail",
+        "websiteUrl",
+        "logoUrl",
+        "companyDescription",
+        "status"
+      ]
+    },
+    "Customer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Customer",
+      "type": "object",
+      "description": "Represents a customer account and their information.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the customer."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Links to the user's UID in Firebase Auth if they have an account."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the customer."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the customer."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the customer.",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number of the customer."
+        },
+        "company": {
+          "type": "string",
+          "description": "The customer's company name."
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "description": "The customer's website."
+        },
+        "logoUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL for the customer's company logo."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Lead", "Active", "On Hold", "Churned"],
+          "description": "The current status of the customer."
+        },
+        "lastContacted": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp of the last interaction."
+        },
+        "notes": {
+          "type": "string",
+          "description": "General notes about the customer."
+        },
+        "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the customer was created."
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "status",
+        "lastContacted",
+        "createdAt"
+      ]
+    },
+    "Interaction": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Interaction",
+        "type": "object",
+        "description": "Represents an interaction or note logged for a customer.",
+        "properties": {
+            "id": { "type": "string" },
+            "type": {
+                "type": "string",
+                "enum": ["Call", "Email", "Meeting", "Note"],
+                "description": "The type of interaction."
+            },
+            "notes": {
+                "type": "string",
+                "description": "Details about the interaction."
+            },
+            "date": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The timestamp of the interaction."
+            },
+            "authorId": {
+                "type": "string",
+                "description": "The ID of the admin/sales member who logged the interaction."
+            }
+        },
+        "required": ["id", "type", "notes", "date", "authorId"]
+    },
+    "SalesTeamMember": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SalesTeamMember",
+      "type": "object",
+      "description": "Represents a member of the sales team.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the sales team member."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the sales team member."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the sales team member."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the sales team member.",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email"
+      ]
+    },
+    "Testimonial": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Testimonial",
+      "type": "object",
+      "description": "A customer testimonial for marketing purposes.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "authorName": {
+          "type": "string"
+        },
+        "authorTitle": {
+          "type": "string"
+        },
+        "authorCompany": {
+          "type": "string"
+        },
+        "authorAvatarUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "content": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category for which the testimonial is relevant (e.g., 'sales', 'support')."
+        },
+        "status": {
+            "type": "string",
+            "enum": ["Pending", "Approved", "Rejected"],
+            "description": "The approval status of the testimonial."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "authorName", "content", "category", "status", "createdAt"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous",
+      "google.com"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": { "$ref": "#/backend/entities/UserProfile" },
+          "description": "Stores public user profile data.",
+          "params": [{ "name": "userId", "description": "Matches the user's Firebase Auth UID." }]
+        }
+      },
+      {
+        "path": "/softwareProducts/{softwareProductId}",
+        "definition": {
+          "entityName": "SoftwareProduct",
+          "schema": {
+            "$ref": "#/backend/entities/SoftwareProduct"
+          },
+          "description": "Stores all software products available on the platform.",
+          "params": [
+            {
+              "name": "softwareProductId",
+              "description": "Unique identifier for the software product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/softwareProducts/{softwareProductId}/pricingTiers/{pricingTierId}",
+        "definition": {
+          "entityName": "PricingTier",
+          "schema": {
+            "$ref": "#/backend/entities/PricingTier"
+          },
+          "description": "Stores pricing tiers for a specific software product.",
+          "params": [
+            {
+              "name": "softwareProductId",
+              "description": "The ID of the parent software product."
+            },
+            {
+              "name": "pricingTierId",
+              "description": "Unique ID for the pricing tier."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/softwareProducts/{softwareProductId}/reviews/{reviewId}",
+        "definition": {
+          "entityName": "Review",
+          "schema": {
+            "$ref": "#/backend/entities/Review"
+          },
+          "description": "Stores user reviews for a specific software product.",
+          "params": [
+            {
+              "name": "softwareProductId",
+              "description": "The ID of the parent software product."
+            },
+            {
+              "name": "reviewId",
+              "description": "Unique ID for the review."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/partners/{partnerId}",
+        "definition": {
+          "entityName": "Partner",
+          "schema": {
+            "$ref": "#/backend/entities/Partner"
+          },
+          "description": "Stores partner information.",
+          "params": [
+            {
+              "name": "partnerId",
+              "description": "Unique identifier for the partner."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/customers/{customerId}",
+        "definition": {
+          "entityName": "Customer",
+          "schema": {
+            "$ref": "#/backend/entities/Customer"
+          },
+          "description": "Stores customer information.",
+          "params": [
+            {
+              "name": "customerId",
+              "description": "Unique identifier for the customer."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/customers/{customerId}/interactions/{interactionId}",
+        "definition": {
+            "entityName": "Interaction",
+            "schema": { "$ref": "#/backend/entities/Interaction" },
+            "description": "Stores interactions and notes logged for a specific customer.",
+            "params": [
+                {
+                    "name": "customerId",
+                    "description": "The ID of the parent customer."
+                },
+                {
+                    "name": "interactionId",
+                    "description": "Unique ID for the interaction."
+                }
+            ]
+        }
+      },
+      {
+        "path": "/salesTeamMembers/{salesTeamMemberId}",
+        "definition": {
+          "entityName": "SalesTeamMember",
+          "schema": {
+            "$ref": "#/backend/entities/SalesTeamMember"
+          },
+          "description": "Stores sales team member information.",
+          "params": [
+            {
+              "name": "salesTeamMemberId",
+              "description": "Unique identifier for the sales team member."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/testimonials/{testimonialId}",
+        "definition": {
+          "entityName": "Testimonial",
+          "schema": {
+            "$ref": "#/backend/entities/Testimonial"
+          },
+          "description": "Stores customer testimonials.",
+          "params": [
+            {
+              "name": "testimonialId",
+              "description": "Unique identifier for the testimonial."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/salesInquiries/{salesInquiryId}",
+        "definition": {
+          "entityName": "Inquiry",
+          "schema": {
+            "$ref": "#/backend/entities/Inquiry"
+          },
+          "description": "Stores inquiries from the sales page.",
+          "params": [
+            {
+              "name": "salesInquiryId",
+              "description": "Unique identifier for the sales inquiry."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure has been updated to include collections for 'testimonials', 'salesInquiries' and 'users' to support the new sales, testimonials and user profile features."
+  }
+}
