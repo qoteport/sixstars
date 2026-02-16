@@ -29,19 +29,55 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 // A simple markdown renderer
 function SimpleMarkdown({ content }: { content: string }) {
-  return (
-    <div>
-      {content.split('\n').map((line, index) => {
-        if (line.startsWith('### ')) {
-          return <h3 key={index} className="text-xl font-semibold mt-4 mb-2">{line.substring(4)}</h3>;
+    const renderWithInlineStyles = (text: string) => {
+        // This regex splits the text by bold/italic markers, keeping the markers.
+        // It handles **bold** and *italic*.
+        const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+
+        return parts.map((part, index) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                return <strong key={index}>{part.slice(2, -2)}</strong>;
+            }
+            if (part.startsWith('*') && part.endsWith('*')) {
+                return <em key={index}>{part.slice(1, -1)}</em>;
+            }
+            return part;
+        });
+    };
+
+    const lines = content.split('\n');
+    const elements: React.ReactNode[] = [];
+    let listItems: string[] = [];
+
+    const flushList = () => {
+        if (listItems.length > 0) {
+            elements.push(
+                <ul key={`ul-${elements.length}`}>
+                    {listItems.map((item, i) => (
+                        <li key={i}>{renderWithInlineStyles(item)}</li>
+                    ))}
+                </ul>
+            );
+            listItems = [];
         }
-        if (line.startsWith('* ')) {
-          return <li key={index} className="ml-5 list-disc text-muted-foreground">{line.substring(2)}</li>;
+    };
+
+    lines.forEach((line) => {
+        if (line.trim().startsWith('* ')) {
+            listItems.push(line.trim().substring(2));
+        } else {
+            flushList();
+            if (line.startsWith('### ')) {
+                elements.push(<h3 key={elements.length}>{renderWithInlineStyles(line.substring(4))}</h3>);
+            } else if (line.trim() !== '') {
+                elements.push(<p key={elements.length}>{renderWithInlineStyles(line)}</p>);
+            }
         }
-        return <p key={index} className="text-muted-foreground mb-4">{line}</p>;
-      })}
-    </div>
-  );
+    });
+    
+    flushList();
+
+    return <>{elements}</>;
 }
 
 const StarRatingDisplay = ({ rating, totalReviews, showTotal = true }: { rating: number, totalReviews: number, showTotal?: boolean }) => {
