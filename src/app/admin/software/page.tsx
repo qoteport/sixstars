@@ -17,7 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { MoreHorizontal, PlusCircle, Star, Edit, Trash, CheckCircle, Loader2, DollarSign, X } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Star, Edit, Trash, CheckCircle, Loader2, DollarSign, X, Upload } from 'lucide-react';
 import Image from 'next/image';
 import {
   DropdownMenu,
@@ -32,6 +32,7 @@ import { Badge } from '@/components/ui/badge';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import type { SoftwareProduct, Partner, PricingTier, SoftwareCategory } from '@/lib/types';
 import { collection, deleteDoc, doc, updateDoc, setDoc, writeBatch, addDoc, getDocs } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
@@ -43,12 +44,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 
 const softwareFormSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   description: z.string().min(10, 'Description is required'),
   details: z.string().min(20, 'Details are required'),
-  imageUrl: z.string().url('A valid image URL is required'),
+  imageUrl: z.string().url('A valid image URL is required').optional().or(z.literal('')),
   productUrl: z.string().url('A valid product URL is required').optional().or(z.literal('')),
   imageHint: z.string().optional(),
   category: z.string().min(2, 'Category is required'),
@@ -60,9 +62,11 @@ const softwareFormSchema = z.object({
 
 
 function SoftwareForm({ product, categories, onComplete }: { product?: SoftwareProduct, categories: SoftwareCategory[], onComplete: () => void }) {
-  const { firestore } = useFirebase();
+  const { firestore, storage } = useFirebase();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   
   const form = useForm<z.infer<typeof softwareFormSchema>>({
     resolver: zodResolver(softwareFormSchema),
@@ -102,23 +106,70 @@ function SoftwareForm({ product, categories, onComplete }: { product?: SoftwareP
         isFeatured: false,
         features: [],
     });
+    setImageFile(null);
+    setUploadProgress(null);
+    const fileInput = document.getElementById('image-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
   }, [product, form]);
 
   async function onSubmit(values: z.infer<typeof softwareFormSchema>) {
-    if (!firestore) return;
+    if (!firestore || !storage) return;
     setIsSubmitting(true);
+    setUploadProgress(null);
+
+    let finalImageUrl = values.imageUrl;
+
+    if (imageFile) {
+        const storageRef = ref(storage, `software-images/${Date.now()}_${imageFile.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+        try {
+            finalImageUrl = await new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setUploadProgress(progress);
+                    },
+                    (error) => {
+                        console.error("Upload failed:", error);
+                        reject(error);
+                    },
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        resolve(downloadURL);
+                    }
+                );
+            });
+        } catch (error) {
+            toast({ variant: 'destructive', title: 'Image upload failed.' });
+            setIsSubmitting(false);
+            return;
+        }
+    }
+
+
+    if (!finalImageUrl) {
+        toast({ variant: 'destructive', title: 'Image URL is required.', description: 'Please provide a URL or upload an image.' });
+        setIsSubmitting(false);
+        return;
+    }
 
     try {
+      const dataToSave = {
+        ...values,
+        imageUrl: finalImageUrl,
+      };
+
       if (product) {
         // Update existing product
         const productRef = doc(firestore, 'softwareProducts', product.id);
-        await updateDoc(productRef, values);
+        await updateDoc(productRef, dataToSave);
         toast({ title: 'Software updated successfully!' });
       } else {
         // Create new product
         const newProductRef = doc(collection(firestore, 'softwareProducts'));
         const newProductData = {
-          ...values,
+          ...dataToSave,
           id: newProductRef.id,
           rating: 0,
           reviewCount: 0,
@@ -134,6 +185,8 @@ function SoftwareForm({ product, categories, onComplete }: { product?: SoftwareP
       toast({ variant: 'destructive', title: 'Failed to save software.' });
     } finally {
       setIsSubmitting(false);
+      setUploadProgress(null);
+      setImageFile(null);
     }
   }
 
@@ -168,9 +221,57 @@ function SoftwareForm({ product, categories, onComplete }: { product?: SoftwareP
             <FormField control={form.control} name="details" render={({ field }) => (
                 <FormItem><FormLabel>Detailed Description</FormLabel><FormControl><Textarea {...field} className="min-h-32" /></FormControl><FormMessage /></FormItem>
             )} />
+
             <FormField control={form.control} name="imageUrl" render={({ field }) => (
-                <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem>
+                    <FormLabel>Image URL</FormLabel>
+                    <FormControl>
+                        <Input {...field} placeholder="https://... Paste a URL" disabled={!!imageFile} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
             )} />
+
+            <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or</span>
+                </div>
+            </div>
+
+            <div>
+                <FormLabel>Upload an Image</FormLabel>
+                <div className="mt-2 flex items-center gap-4">
+                    <FormControl>
+                        <Input 
+                            id="image-upload"
+                            type="file" 
+                            accept="image/*"
+                            className="flex-1"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0] || null;
+                                setImageFile(file);
+                                if (file) {
+                                    form.setValue('imageUrl', ''); // Clear URL if file is chosen
+                                }
+                            }} 
+                        />
+                    </FormControl>
+                    {imageFile && (
+                        <Button variant="ghost" size="icon" onClick={() => {
+                            setImageFile(null);
+                            const fileInput = document.getElementById('image-upload') as HTMLInputElement;
+                            if (fileInput) fileInput.value = '';
+                        }}>
+                            <X className="h-4 w-4" />
+                        </Button>
+                    )}
+                </div>
+                {uploadProgress !== null && <Progress value={uploadProgress} className="w-full mt-2" />}
+            </div>
+
             <FormField control={form.control} name="productUrl" render={({ field }) => (
                 <FormItem><FormLabel>Product Website URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
             )} />
@@ -647,3 +748,5 @@ export default function SoftwareAdminPage() {
     </Fragment>
   );
 }
+
+    
