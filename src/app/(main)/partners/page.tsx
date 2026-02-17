@@ -24,6 +24,7 @@ import { paths } from "@/lib/paths";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 
 const formSchema = z.object({
@@ -47,6 +48,7 @@ export default function PartnerRegisterPage() {
   const { firestore, storage } = useFirebase();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const { toast } = useToast();
 
   const partnersQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'partners'), where('status', '==', 'Published')) : null, [firestore]);
   const { data: partners, isLoading: partnersLoading } = useCollection<Partner>(partnersQuery);
@@ -97,13 +99,22 @@ export default function PartnerRegisterPage() {
             });
         } catch (error) {
             console.error("Upload failed:", error);
+            toast({
+                variant: "destructive",
+                title: "Image Upload Failed",
+                description: "There was an issue uploading your logo. Please try again.",
+            });
             setIsSubmitting(false);
             return;
         }
     }
 
     if (!finalLogoUrl) {
-      console.error("A logo URL or uploaded image is required.");
+      toast({
+          variant: "destructive",
+          title: "Logo Required",
+          description: "Please provide a logo URL or upload a logo image.",
+      });
       setIsSubmitting(false);
       return;
     }
@@ -153,7 +164,11 @@ export default function PartnerRegisterPage() {
       setIsSubmitSuccessful(true);
     } catch(error) {
        console.error("Error submitting partner application:", error);
-       // Here you would show an error toast to the user
+       toast({
+           variant: "destructive",
+           title: "Submission Failed",
+           description: error instanceof Error ? error.message : "An unknown error occurred. Please try again.",
+       });
     } finally {
        setIsSubmitting(false);
        setUploadProgress(null);

@@ -27,8 +27,11 @@ service cloud.firestore {
     match /softwareProducts/{productId} {
       allow read: if true;
 
-      // Admins or the partner who owns the product can create/update.
-      allow write: if isAdmin() || isProductOwner(productId);
+      // Authenticated users can create product applications (as drafts)
+      allow create: if request.auth != null;
+      
+      // Admins or the partner who owns the product can update or delete.
+      allow update, delete: if isAdmin() || isProductOwner(productId);
 
       // Reviews can be created by any authenticated user.
       match /reviews/{reviewId} {
