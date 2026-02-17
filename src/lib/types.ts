@@ -1,6 +1,30 @@
 
 import { z } from 'zod';
 
+// AI Flow Schemas
+export const copilotRequestBodySchema = z.object({
+  history: z.array(z.any()), // Simplified for now
+  prompt: z.string(),
+});
+export type CopilotRequestBody = z.infer<typeof copilotRequestBodySchema>;
+
+export const copilotResponseMessageSchema = z.object({
+  role: z.enum(['user', 'model', 'assistant']),
+  content: z.array(z.any()), // Simplified for now
+});
+export type CopilotResponseMessage = z.infer<typeof copilotResponseMessageSchema>;
+
+
+export const submitTestimonialRequestSchema = z.object({
+  authorName: z.string(),
+  authorTitle: z.string().optional(),
+  authorCompany: z.string().optional(),
+  content: z.string(),
+  category: z.string(),
+});
+export type SubmitTestimonialRequest = z.infer<typeof submitTestimonialRequestSchema>;
+
+
 export const softwareReviewSchema = z.object({
   id: z.string(),
   author: z.string(),
