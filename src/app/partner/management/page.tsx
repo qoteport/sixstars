@@ -17,7 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { MoreHorizontal, PlusCircle, Star, Edit, Trash, CheckCircle, Loader2, DollarSign, X, Upload, BarChart, ExternalLink } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Star, Edit, Trash, CheckCircle, Loader2, DollarSign, X, Upload, BarChart, ExternalLink, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import {
   DropdownMenu,
@@ -545,6 +545,19 @@ export default function PartnerManagementPage() {
     const categoriesQuery = useMemoFirebase(() => (firestore ? collection(firestore, 'softwareCategories') : null), [firestore]);
     const { data: categories, isLoading: categoriesLoading } = useCollection<SoftwareCategory>(categoriesQuery);
 
+    const { totalClicks, averageRating, totalReviews } = useMemo(() => {
+        if (!products) {
+            return { totalClicks: 0, averageRating: 0, totalReviews: 0 };
+        }
+        const totalReviews = products.reduce((acc, p) => acc + (p.reviewCount || 0), 0);
+        const totalClicks = products.reduce((acc, p) => acc + (p.clicks || 0), 0);
+        const weightedRatingSum = products.reduce((acc, p) => acc + (p.rating || 0) * (p.reviewCount || 0), 0);
+        const averageRating = totalReviews > 0 ? weightedRatingSum / totalReviews : 0;
+
+        return { totalClicks, averageRating, totalReviews };
+    }, [products]);
+
+
     const handleDelete = async (id: string) => {
         if (!firestore) return;
         if (confirm('Are you sure you want to delete this product? This will also delete all associated pricing and reviews.')) {
@@ -584,6 +597,40 @@ export default function PartnerManagementPage() {
                         <PlusCircle className="mr-2 h-4 w-4" /> Add Software
                     </Button>
                 </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Total Clicks</CardTitle>
+                            <BarChart className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            {isLoading ? <Skeleton className="h-8 w-12" /> : <div className="text-2xl font-bold">{totalClicks}</div>}
+                            <p className="text-xs text-muted-foreground">Across all your products</p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
+                            <Star className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                             {isLoading ? <Skeleton className="h-8 w-12" /> : <div className="text-2xl font-bold">{averageRating.toFixed(1)}</div>}
+                            <p className="text-xs text-muted-foreground">From {totalReviews} total reviews</p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
+                            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            {isLoading ? <Skeleton className="h-8 w-12" /> : <div className="text-2xl font-bold">{totalReviews}</div>}
+                            <p className="text-xs text-muted-foreground">On all your products</p>
+                        </CardContent>
+                    </Card>
+                </div>
+
                 <Card>
                     <CardHeader>
                         <CardTitle>Your Software Products</CardTitle>
@@ -615,7 +662,7 @@ export default function PartnerManagementPage() {
                                         </TableCell>
                                         <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                                         <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-12" /></TableCell>
                                         <TableCell><Skeleton className="h-8 w-8" /></TableCell>
                                     </TableRow>
                                     ))}

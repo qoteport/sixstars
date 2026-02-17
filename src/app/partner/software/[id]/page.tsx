@@ -4,9 +4,9 @@
 import { useFirebase, useUser } from "@/firebase";
 import { doc, getDoc, collection, query, orderBy, getDocs } from "firebase/firestore";
 import { notFound, useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { SoftwareProduct, SoftwareReview, UserProfile, Partner } from "@/lib/types";
-import { Loader2, ArrowLeft, BarChart, Star, MessageSquare } from "lucide-react";
+import { Loader2, ArrowLeft, BarChart as BarChartIcon, Star, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -14,6 +14,13 @@ import { paths } from "@/lib/paths";
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+    type ChartConfig,
+} from "@/components/ui/chart";
 
 const StarRatingDisplay = ({ rating }: { rating: number }) => {
     const fullStars = Math.floor(rating);
@@ -37,6 +44,31 @@ export default function SoftwareAnalyticsPage() {
     const [product, setProduct] = useState<SoftwareProduct | null>(null);
     const [reviews, setReviews] = useState<SoftwareReview[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const chartData = useMemo(() => {
+        const ratingCounts: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        reviews.forEach(review => {
+            const rating = Math.round(review.rating);
+            if (rating >= 1 && rating <= 5) {
+                ratingCounts[rating]++;
+            }
+        });
+
+        return [
+            { rating: "1 Star", count: ratingCounts[1] },
+            { rating: "2 Stars", count: ratingCounts[2] },
+            { rating: "3 Stars", count: ratingCounts[3] },
+            { rating: "4 Stars", count: ratingCounts[4] },
+            { rating: "5 Stars", count: ratingCounts[5] },
+        ];
+    }, [reviews]);
+
+    const chartConfig = {
+        count: {
+            label: "Reviews",
+            color: "hsl(var(--primary))",
+        },
+    } satisfies ChartConfig;
 
     useEffect(() => {
         const verifyOwnershipAndFetch = async () => {
@@ -138,6 +170,32 @@ export default function SoftwareAnalyticsPage() {
                     </CardContent>
                 </Card>
             </div>
+
+             <Card>
+                <CardHeader>
+                    <CardTitle>Rating Distribution</CardTitle>
+                    <CardDescription>Distribution of ratings from customer reviews.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChartContainer config={chartConfig} className="h-[250px] w-full">
+                        <BarChart accessibilityLayer data={chartData}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis
+                                dataKey="rating"
+                                tickLine={false}
+                                tickMargin={10}
+                                axisLine={false}
+                            />
+                            <YAxis />
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Bar dataKey="count" fill="var(--color-count)" radius={4} />
+                        </BarChart>
+                    </ChartContainer>
+                </CardContent>
+            </Card>
             
             <Card>
                 <CardHeader>
