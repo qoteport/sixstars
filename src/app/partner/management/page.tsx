@@ -59,7 +59,6 @@ const softwareFormSchema = z.object({
   category: z.string().min(2, 'Category is required'),
   model: z.string().min(2, 'Sales model is required'),
   status: z.enum(['Published', 'Draft']),
-  isFeatured: z.boolean().default(false),
   features: z.array(z.string()).optional(),
 });
 
@@ -83,7 +82,6 @@ function SoftwareForm({ product, categories, partnerId, onComplete }: { product?
         category: '',
         model: 'Subscription',
         status: 'Draft',
-        isFeatured: false,
         features: [],
     },
   });
@@ -106,7 +104,6 @@ function SoftwareForm({ product, categories, partnerId, onComplete }: { product?
         category: '',
         model: 'Subscription',
         status: 'Draft',
-        isFeatured: false,
         features: [],
     });
     setImageFile(null);
@@ -321,15 +318,6 @@ function SoftwareForm({ product, categories, partnerId, onComplete }: { product?
                     </SelectContent>
                 </Select>
                 <FormMessage /></FormItem>
-            )} />
-            <FormField control={form.control} name="isFeatured" render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                        <FormLabel>Featured</FormLabel>
-                        <FormMessage/>
-                    </div>
-                    <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                </FormItem>
             )} />
         </div>
         <SheetFooter className="p-6 mt-auto">
@@ -734,7 +722,7 @@ export default function PartnerManagementPage() {
                                 ))}
                                 {!isLoading && products?.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center h-48">No software products found.</TableCell>
+                                        <TableCell colSpan={7} className="text-center h-48">No software products found.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>

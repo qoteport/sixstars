@@ -192,7 +192,7 @@ function SoftwareForm({ product, categories, onComplete }: { product?: SoftwareP
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="h-full flex flex-col">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="h-full flex flex-col bg-card">
         <SheetHeader className="p-6">
           <SheetTitle>{product ? 'Edit Software' : 'Add New Software'}</SheetTitle>
           <SheetDescription>
@@ -443,7 +443,7 @@ function PricingForm({ product, onComplete }: { product: SoftwareProduct, onComp
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-card">
        <SheetHeader className="p-6">
           <SheetTitle>Manage Pricing for {product.name}</SheetTitle>
           <SheetDescription>
@@ -740,7 +740,7 @@ export default function SoftwareAdminPage() {
       </Card>
     </div>
      <Sheet open={sheetState.open} onOpenChange={(open) => !open && handleCloseSheet()}>
-        <SheetContent className="sm:max-w-2xl w-full bg-card">
+        <SheetContent className="sm:max-w-2xl w-full p-0">
             {sheetState.view === 'edit' && categories && <SoftwareForm product={sheetState.product} categories={categories} onComplete={handleCloseSheet} />}
             {sheetState.view === 'pricing' && sheetState.product && <PricingForm product={sheetState.product} onComplete={handleCloseSheet} />}
         </SheetContent>
