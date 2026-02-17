@@ -1,7 +1,4 @@
-import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/google-genai';
 
-export const ai = genkit({
-  plugins: [googleAI()],
-  model: 'gemini-pro',
-});
+'use client';
+// This file has been cleared to resolve dependency issues.
+// The AI Copilot functionality is temporarily unavailable.
