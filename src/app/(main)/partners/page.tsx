@@ -1,4 +1,3 @@
-
 'use client';
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -74,6 +73,8 @@ export default function PartnerRegisterPage() {
       pricingModel: "",
     },
   });
+
+  const logoUrlValue = form.watch('logoUrl');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!firestore || !storage) return;
@@ -342,11 +343,14 @@ export default function PartnerRegisterPage() {
                       <Label htmlFor="logo-upload-public">Upload a Logo</Label>
                       <div className="mt-2 flex items-center gap-4">
                         <FormControl>
-                          <Input id="logo-upload-public" type="file" accept="image/*" className="flex-1" onChange={(e) => {
-                            const file = e.target.files?.[0] || null;
-                            setImageFile(file);
-                            if (file) form.setValue('logoUrl', '');
-                          }} />
+                          <Input id="logo-upload-public" type="file" accept="image/*" className="flex-1"
+                            disabled={!!logoUrlValue}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0] || null;
+                              setImageFile(file);
+                              if (file) form.setValue('logoUrl', '');
+                            }} 
+                          />
                         </FormControl>
                         {imageFile && <Button variant="ghost" size="icon" onClick={() => {
                           setImageFile(null);
