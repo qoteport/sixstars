@@ -1,17 +1,49 @@
 
 import { z } from 'zod';
 
+export const softwareProductSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  imageUrl: z.string(),
+  imageHint: z.string().optional(),
+  category: z.string(),
+  model: z.string(),
+  rating: z.number(),
+  features: z.array(z.string()).optional(),
+  details: z.string(),
+  productUrl: z.string().url().optional(),
+  createdAt: z.string().optional(),
+  reviewCount: z.number().optional(),
+  partnerId: z.string().optional(),
+  status: z.enum(['Published', 'Draft']),
+  isFeatured: z.boolean().optional(),
+  clicks: z.number().optional(),
+});
+export type SoftwareProduct = z.infer<typeof softwareProductSchema>;
+
+
 // AI Flow Schemas
+// Define the schema for a single part of a message (text or product)
+export const contentPartSchema = z.union([
+    z.object({ text: z.string() }),
+    z.object({ product: softwareProductSchema }),
+]);
+
+// A message in the chat history
+export const messageSchema = z.object({
+    role: z.enum(['user', 'model', 'assistant']),
+    content: z.array(contentPartSchema),
+});
+
+// The request body for the flow
 export const copilotRequestBodySchema = z.object({
-  history: z.array(z.any()), // Simplified for now
+  history: z.array(messageSchema),
   prompt: z.string(),
 });
 export type CopilotRequestBody = z.infer<typeof copilotRequestBodySchema>;
 
-export const copilotResponseMessageSchema = z.object({
-  role: z.enum(['user', 'model', 'assistant']),
-  content: z.array(z.any()), // Simplified for now
-});
+export const copilotResponseMessageSchema = messageSchema;
 export type CopilotResponseMessage = z.infer<typeof copilotResponseMessageSchema>;
 
 
@@ -43,26 +75,7 @@ export const pricingTierSchema = z.object({
 });
 export type PricingTier = z.infer<typeof pricingTierSchema>;
 
-export const softwareProductSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-  imageUrl: z.string(),
-  imageHint: z.string().optional(),
-  category: z.string(),
-  model: z.string(),
-  rating: z.number(),
-  features: z.array(z.string()).optional(),
-  details: z.string(),
-  productUrl: z.string().url().optional(),
-  createdAt: z.string().optional(),
-  reviewCount: z.number().optional(),
-  partnerId: z.string().optional(),
-  status: z.enum(['Published', 'Draft']),
-  isFeatured: z.boolean().optional(),
-  clicks: z.number().optional(),
-});
-export type SoftwareProduct = z.infer<typeof softwareProductSchema>;
+
 
 
 export type Partner = {

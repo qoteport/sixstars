@@ -1,9 +1,7 @@
 
 'use server';
 
-// import { softwareCopilotFlow } from '@/ai/flows/software-copilot-flow';
-// import type { CopilotRequestBody, CopilotResponseMessage } from '@/ai/flows/software-copilot-flow';
-// import { submitTestimonialFlow, type SubmitTestimonialRequest } from '@/ai/flows/submit-testimonial-flow';
+import { softwareCopilotFlow } from '@/ai/flows/software-copilot-flow';
 import { getFirestore, doc, updateDoc, increment } from 'firebase/firestore';
 import { initializeServerFirebase } from '@/migrations/001-migrate-software';
 import type { CopilotRequestBody, CopilotResponseMessage, SubmitTestimonialRequest } from '@/lib/types';
@@ -11,12 +9,8 @@ import type { CopilotRequestBody, CopilotResponseMessage, SubmitTestimonialReque
 
 export async function getCopilotResponse(body: CopilotRequestBody): Promise<CopilotResponseMessage> {
   try {
-    // const response = await softwareCopilotFlow(body);
-    // return response;
-    return {
-      role: 'assistant',
-      content: [{text: "The AI copilot is temporarily unavailable. Please try again later."}]
-    }
+    const response = await softwareCopilotFlow(body);
+    return response;
   } catch (error) {
     console.error('Error in getCopilotResponse. The original error was:', error);
     // In a real app, you'd handle this more gracefully

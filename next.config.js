@@ -40,6 +40,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'sixstars-62cf7.web.app',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

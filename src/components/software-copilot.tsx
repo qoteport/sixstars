@@ -78,7 +78,7 @@ export function SoftwareCopilot({ closeSheet, initialMessage, storageKey }: Soft
       console.error("Failed to load chat history from local storage", error);
       localStorage.removeItem(storageKey || LOCAL_STORAGE_KEY);
     }
-  }, []);
+  }, [storageKey]);
 
   // Save chat history to local storage whenever it changes
   useEffect(() => {
@@ -90,7 +90,7 @@ export function SoftwareCopilot({ closeSheet, initialMessage, storageKey }: Soft
     } catch (error) {
       console.error("Failed to save chat history to local storage", error);
     }
-  }, [chatHistory]);
+  }, [chatHistory, storageKey]);
 
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
@@ -119,7 +119,7 @@ export function SoftwareCopilot({ closeSheet, initialMessage, storageKey }: Soft
     const userMessage: CopilotResponseMessage = { role: 'user', content: [{ text: messageToSend }] };
 
     const requestBody: CopilotRequestBody = {
-      history: [...chatHistory, userMessage],
+      history: chatHistory,
       prompt: messageToSend,
     };
 
