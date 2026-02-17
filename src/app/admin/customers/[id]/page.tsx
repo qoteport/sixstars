@@ -1,6 +1,5 @@
-
 'use client';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFirebase } from '@/firebase';
 import { collection, deleteDoc, doc, updateDoc, orderBy, query, addDoc, getDoc, getDocs, setDoc, serverTimestamp } from 'firebase/firestore';
 import type { Customer, Interaction } from '@/lib/types';
@@ -49,8 +48,8 @@ function InteractionLog({ interaction, onDelete }: { interaction: Interaction, o
     )
 }
 
-export default function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function CustomerDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const { firestore, user: currentUser } = useFirebase();
   const { toast } = useToast();
   

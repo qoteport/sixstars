@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -9,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Star, Bot, CheckCircle, ArrowLeft, Sparkles, LifeBuoy, Users, Check, MessageSquare, ExternalLink } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
-import { useState, use, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useFirebase } from '@/firebase';
 import { doc, collection, query, where, limit, getDoc, getDocs, runTransaction } from 'firebase/firestore';
@@ -209,9 +208,8 @@ const RateSoftware = ({ productId, onReviewSubmit }: { productId: string, onRevi
 };
 
 
-export default function SoftwareDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  // Unwrap the params promise using React.use()
-  const { id } = use(params);
+export default function SoftwareDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const [copilotOpen, setCopilotOpen] = useState(false);
   const [copilotInitialMessage, setCopilotInitialMessage] = useState<string | undefined>(undefined);
 
