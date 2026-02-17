@@ -32,6 +32,8 @@ import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { paths } from '@/lib/paths';
 import type { UserProfile, Partner } from '@/lib/types';
+import PartnerContext from './partner-context';
+import { toast } from '@/hooks/use-toast';
 
 
 export default function PartnerLayout({ children }: { children: React.ReactNode }) {
@@ -96,6 +98,7 @@ export default function PartnerLayout({ children }: { children: React.ReactNode 
   }
 
   return (
+    <PartnerContext.Provider value={{ partner }}>
     <SidebarProvider>
       <Sidebar collapsible="icon" side="left">
         <SidebarHeader className="border-b">
@@ -156,5 +159,6 @@ export default function PartnerLayout({ children }: { children: React.ReactNode 
         <main className="flex-1 overflow-auto p-4 sm:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
+    </PartnerContext.Provider>
   );
 }

@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetClose } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { useCollection, useFirebase, useMemoFirebase, useUser } from '@/firebase';
+import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import type { SoftwareProduct, Partner, PricingTier, SoftwareCategory } from '@/lib/types';
 import { collection, deleteDoc, doc, updateDoc, setDoc, writeBatch, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -47,6 +47,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { paths } from '@/lib/paths';
 import Link from 'next/link';
+import { usePartner } from '../partner-context';
 
 const softwareFormSchema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -529,22 +530,11 @@ function PricingForm({ product, onComplete }: { product: SoftwareProduct, onComp
 }
 
 export default function PartnerManagementPage() {
-    const { firestore, user } = useFirebase();
+    const { firestore } = useFirebase();
     const { toast } = useToast();
     const [sheetState, setSheetState] = useState<{ open: boolean, product?: SoftwareProduct, view: 'edit' | 'pricing' }>({ open: false, view: 'edit' });
-    const [partnerId, setPartnerId] = useState<string | null>(null);
-
-    useEffect(() => {
-        const getPartnerId = async () => {
-            if (user && firestore) {
-                const userDoc = await getDoc(doc(firestore, 'users', user.uid));
-                if (userDoc.exists() && userDoc.data().partnerId) {
-                    setPartnerId(userDoc.data().partnerId);
-                }
-            }
-        }
-        getPartnerId();
-    }, [user, firestore]);
+    const { partner } = usePartner();
+    const partnerId = partner?.id;
 
     const softwareProductsQuery = useMemoFirebase(() => {
         if (!firestore || !partnerId) return null;
