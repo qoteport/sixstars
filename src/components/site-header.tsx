@@ -63,6 +63,18 @@ export function SiteHeader() {
                 {label}
               </Link>
             ))}
+            {isClient && userProfile?.role === 'seller' && (
+                 <Link
+                    key={paths.partner.management}
+                    href={paths.partner.management}
+                    className={cn(
+                        'transition-colors hover:text-foreground/80',
+                        pathname.startsWith('/partner') ? 'text-foreground' : 'text-foreground/60'
+                    )}
+                >
+                    Partner Portal
+                </Link>
+            )}
             {isClient && userProfile?.isAdmin && (
                  <Link
                     key={paths.admin.dashboard}
@@ -125,6 +137,21 @@ export function SiteHeader() {
                       {label}
                     </Link>
                   ))}
+                  {isClient && userProfile?.role === 'seller' && (
+                     <Link
+                        key={paths.partner.management}
+                        href={paths.partner.management}
+                        className={cn(
+                            'flex items-center gap-2 rounded-md p-2 text-sm',
+                            pathname.startsWith('/partner')
+                            ? 'bg-accent text-accent-foreground'
+                            : 'text-muted-foreground hover:bg-accent/50'
+                        )}
+                    >
+                        <Briefcase className="h-5 w-5" />
+                        Partner Portal
+                    </Link>
+                   )}
                    {isClient && userProfile?.isAdmin && (
                      <Link
                         key={paths.admin.dashboard}

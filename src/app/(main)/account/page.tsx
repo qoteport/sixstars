@@ -48,7 +48,7 @@ function PartnerSoftware({ partner }: { partner: Partner }) {
                 <h3 className="text-xl font-semibold">No Software Listed</h3>
                 <p className="text-muted-foreground mt-2 mb-4">You have not listed any software on our platform yet.</p>
                 <Button asChild>
-                    <Link href={paths.admin.software}>List Your Software</Link>
+                    <Link href={paths.partner.management}>List Your Software</Link>
                 </Button>
             </div>
         )
@@ -494,7 +494,7 @@ export default function AccountPage() {
                                                         </CardHeader>
                                                         <CardContent>
                                                              <Button asChild>
-                                                                <Link href={paths.admin.software}>
+                                                                <Link href={paths.partner.management}>
                                                                     <LayoutGrid className="mr-2 h-4 w-4"/> Manage My Software
                                                                 </Link>
                                                             </Button>
@@ -524,4 +524,3 @@ export default function AccountPage() {
         </div>
     );
 }
-

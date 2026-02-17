@@ -9,6 +9,12 @@ export const paths = {
   login: '/login',
   onboarding: '/onboarding',
 
+  // Partner Portal
+  partner: {
+    management: '/partner/management',
+    software: (id: string) => `/partner/software/${id}`,
+  },
+
   // Admin
   admin: {
     dashboard: '/admin',
