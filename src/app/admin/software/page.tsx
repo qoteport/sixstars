@@ -740,7 +740,7 @@ export default function SoftwareAdminPage() {
       </Card>
     </div>
      <Sheet open={sheetState.open} onOpenChange={(open) => !open && handleCloseSheet()}>
-        <SheetContent className="sm:max-w-2xl w-full">
+        <SheetContent className="sm:max-w-2xl w-full bg-card">
             {sheetState.view === 'edit' && categories && <SoftwareForm product={sheetState.product} categories={categories} onComplete={handleCloseSheet} />}
             {sheetState.view === 'pricing' && sheetState.product && <PricingForm product={sheetState.product} onComplete={handleCloseSheet} />}
         </SheetContent>

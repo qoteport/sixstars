@@ -647,6 +647,8 @@ export default function PartnerManagementPage() {
                                     </TableHead>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Status</TableHead>
+                                    <TableHead>Category</TableHead>
+                                    <TableHead>Model</TableHead>
                                     <TableHead>Clicks</TableHead>
                                     <TableHead>
                                         <span className="sr-only">Actions</span>
@@ -661,6 +663,8 @@ export default function PartnerManagementPage() {
                                             <Skeleton className="h-10 w-10 rounded-md" />
                                         </TableCell>
                                         <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                                        <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                                         <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
                                         <TableCell><Skeleton className="h-4 w-12" /></TableCell>
                                         <TableCell><Skeleton className="h-8 w-8" /></TableCell>
@@ -682,6 +686,10 @@ export default function PartnerManagementPage() {
                                         <Badge variant={product.status === 'Published' ? 'default' : 'secondary'}>
                                             {product.status}
                                         </Badge>
+                                    </TableCell>
+                                    <TableCell>{product.category}</TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline">{product.model}</Badge>
                                     </TableCell>
                                     <TableCell>
                                         {product.clicks || 0}
