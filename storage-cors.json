@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://sixstars-62cf7.web.app"],
+    "method": ["GET", "HEAD", "PUT", "POST", "DELETE"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]
